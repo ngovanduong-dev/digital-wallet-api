@@ -5,35 +5,32 @@
 package db
 
 import (
-	"database/sql"
-	"time"
-
-	"github.com/google/uuid"
+	"github.com/jackc/pgx/v5/pgtype"
 )
 
 type Transaction struct {
-	ID           uuid.UUID
-	WalletID     uuid.UUID
-	Type         string
-	Amount       int64
-	BalanceAfter int64
-	ReferenceID  uuid.NullUUID
-	Note         sql.NullString
-	CreatedAt    time.Time
+	ID           pgtype.UUID        `json:"id"`
+	WalletID     pgtype.UUID        `json:"wallet_id"`
+	Type         string             `json:"type"`
+	Amount       int64              `json:"amount"`
+	BalanceAfter int64              `json:"balance_after"`
+	ReferenceID  pgtype.UUID        `json:"reference_id"`
+	Note         pgtype.Text        `json:"note"`
+	CreatedAt    pgtype.Timestamptz `json:"created_at"`
 }
 
 type User struct {
-	ID        uuid.UUID
-	Email     string
-	Password  string
-	FullName  string
-	CreatedAt time.Time
+	ID        pgtype.UUID        `json:"id"`
+	Email     string             `json:"email"`
+	Password  string             `json:"password"`
+	FullName  string             `json:"full_name"`
+	CreatedAt pgtype.Timestamptz `json:"created_at"`
 }
 
 type Wallet struct {
-	ID        uuid.UUID
-	UserID    uuid.UUID
-	Balance   int64
-	Currency  string
-	CreatedAt time.Time
+	ID        pgtype.UUID        `json:"id"`
+	UserID    pgtype.UUID        `json:"user_id"`
+	Balance   int64              `json:"balance"`
+	Currency  string             `json:"currency"`
+	CreatedAt pgtype.Timestamptz `json:"created_at"`
 }

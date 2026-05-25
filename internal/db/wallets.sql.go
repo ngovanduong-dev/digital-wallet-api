@@ -8,7 +8,7 @@ package db
 import (
 	"context"
 
-	"github.com/google/uuid"
+	"github.com/jackc/pgx/v5/pgtype"
 )
 
 const createWallet = `-- name: CreateWallet :one
@@ -18,12 +18,12 @@ RETURNING id, user_id, balance, currency, created_at
 `
 
 type CreateWalletParams struct {
-	UserID   uuid.UUID
-	Currency string
+	UserID   pgtype.UUID `json:"user_id"`
+	Currency string      `json:"currency"`
 }
 
 func (q *Queries) CreateWallet(ctx context.Context, arg CreateWalletParams) (Wallet, error) {
-	row := q.db.QueryRowContext(ctx, createWallet, arg.UserID, arg.Currency)
+	row := q.db.QueryRow(ctx, createWallet, arg.UserID, arg.Currency)
 	var i Wallet
 	err := row.Scan(
 		&i.ID,
@@ -36,17 +36,18 @@ func (q *Queries) CreateWallet(ctx context.Context, arg CreateWalletParams) (Wal
 }
 
 const getWalletByUserID = `-- name: GetWalletByUserID :one
-SELECT id, user_id, balance, currency, created_at FROM wallets
+SELECT id, user_id, balance, currency, created_at
+FROM wallets
 WHERE user_id = $1 AND currency = $2
 `
 
 type GetWalletByUserIDParams struct {
-	UserID   uuid.UUID
-	Currency string
+	UserID   pgtype.UUID `json:"user_id"`
+	Currency string      `json:"currency"`
 }
 
 func (q *Queries) GetWalletByUserID(ctx context.Context, arg GetWalletByUserIDParams) (Wallet, error) {
-	row := q.db.QueryRowContext(ctx, getWalletByUserID, arg.UserID, arg.Currency)
+	row := q.db.QueryRow(ctx, getWalletByUserID, arg.UserID, arg.Currency)
 	var i Wallet
 	err := row.Scan(
 		&i.ID,
@@ -66,12 +67,12 @@ RETURNING id, user_id, balance, currency, created_at
 `
 
 type UpdateWalletBalanceParams struct {
-	Balance int64
-	ID      uuid.UUID
+	Balance int64       `json:"balance"`
+	ID      pgtype.UUID `json:"id"`
 }
 
 func (q *Queries) UpdateWalletBalance(ctx context.Context, arg UpdateWalletBalanceParams) (Wallet, error) {
-	row := q.db.QueryRowContext(ctx, updateWalletBalance, arg.Balance, arg.ID)
+	row := q.db.QueryRow(ctx, updateWalletBalance, arg.Balance, arg.ID)
 	var i Wallet
 	err := row.Scan(
 		&i.ID,

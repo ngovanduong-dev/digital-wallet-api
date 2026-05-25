@@ -1,2 +1,5 @@
 .env
-.env.*
+*.exe
+*.out
+/tmp
+/bin
