@@ -26,6 +26,10 @@ func Load() (*Config, error) {
 		return nil, fmt.Errorf("JWT_SECRET is required")
 	}
 
+	if len(jwtSecret) < 32 {
+		return nil, fmt.Errorf("JWT_SECRET must be at least 32 characters")
+	}
+
 	port := os.Getenv("PORT")
 	if port == "" {
 		port = "8080"
